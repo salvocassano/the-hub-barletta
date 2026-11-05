@@ -1,0 +1,18 @@
+# Il piano gratuito di Supabase ferma il progetto dopo circa una settimana senza richieste.
+# Due volte a settimana una richiesta col codice sbagliato: legge il database e non scrive niente.
+name: Tieni sveglio il database
+on:
+  schedule:
+    - cron: '17 7 * * 1,4'
+  workflow_dispatch:
+jobs:
+  richiesta:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl --fail --silent --show-error --max-time 30 \
+            -X POST 'https://fpkzgbiernyydzdszaol.supabase.co/rest/v1/rpc/sala_calendario' \
+            -H 'Content-Type: application/json' \
+            -H 'apikey: sb_publishable_dR_EdhuSFKidqMyWbN95vw_Ev3b8DkP' \
+            -H 'Authorization: Bearer sb_publishable_dR_EdhuSFKidqMyWbN95vw_Ev3b8DkP' \
+            -d '{"p_chiave":"sveglia","p_nome":"","p_dal":"2026-01-01","p_al":"2026-01-01"}'
