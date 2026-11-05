@@ -14,18 +14,17 @@
   :root{
     --ink:#15212C; --paper:#F3EFE6; --paper-2:#E7E1D2; --line:#D3CBBC;
     --volt:#2C82C9; --green:#7CC62D; --orange:#EF7D22; --muted:#5C6770; --errore:#B3361E;
+    --mezzora:26px; --giorni:5; --righe:23;
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--paper); color:var(--ink); font-family:"Familjen Grotesk", system-ui, sans-serif; font-size:1.0625rem; line-height:1.5; -webkit-font-smoothing:antialiased;}
-  h1,h2{font-family:"Bricolage Grotesque", sans-serif; font-weight:800; line-height:1.02; margin:0; letter-spacing:-0.02em;}
-  .mono{font-family:"Space Mono", monospace;}
-  .wrap{max-width:720px; margin:0 auto; padding:0 1.25rem 7rem;}
+  h1{font-family:"Bricolage Grotesque", sans-serif; font-weight:800; line-height:1.02; margin:0; letter-spacing:-0.02em; font-size:clamp(2.3rem, 8vw, 3.4rem);}
+  h1 em{font-style:normal; background:var(--green); padding:0 .18em;}
+  .wrap{max-width:860px; margin:0 auto; padding:0 1.25rem 10rem;}
   header{display:flex; align-items:center; gap:.7rem; padding:1.1rem 0; border-bottom:1px solid var(--line); margin-bottom:2rem;}
   header img{height:48px; width:48px; border-radius:50%; object-fit:cover;}
   header b{font-family:"Bricolage Grotesque"; font-weight:800; font-size:1.1rem; letter-spacing:-.03em;}
   header span{color:var(--volt);}
-  h1{font-size:clamp(2.3rem, 8vw, 3.4rem);}
-  h1 em{font-style:normal; background:var(--green); padding:0 .18em;}
   .sotto{color:var(--muted); margin:.9rem 0 1.4rem;}
   .spazi{display:flex; gap:.6rem; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -1.25rem; padding:0 1.25rem .5rem; scrollbar-width:none;}
   .spazi img{flex:none; width:62%; height:auto; aspect-ratio:4/5; object-fit:cover; border-radius:10px; scroll-snap-align:center; background:var(--paper-2);}
@@ -37,29 +36,60 @@
   .etichetta{font-family:"Space Mono", monospace; font-size:.74rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); display:block; margin:1.8rem 0 .6rem;}
   input[type=text]{width:100%; font:inherit; font-size:1.1rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:10px; padding:.85rem 1rem;}
   input[type=text]:focus{outline:2px solid var(--volt); outline-offset:1px;}
-  .giorni{display:flex; gap:.5rem; overflow-x:auto; padding-bottom:.6rem; scrollbar-width:thin; -webkit-overflow-scrolling:touch;}
-  .giorno{flex:none; width:64px; padding:.55rem 0; text-align:center; background:#fff; border:1px solid var(--line); border-radius:10px; color:var(--ink); font:inherit; cursor:pointer;}
-  .giorno small{display:block; font-family:"Space Mono", monospace; font-size:.68rem; text-transform:uppercase; color:var(--muted);}
-  .giorno b{display:block; font-family:"Bricolage Grotesque"; font-size:1.35rem; line-height:1.15;}
-  .giorno.festivo{background:var(--paper-2);}
-  .giorno[aria-pressed=true]{background:var(--ink); border-color:var(--ink); color:var(--paper);}
-  .giorno[aria-pressed=true] small{color:var(--paper);}
-  .fasce{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:.55rem;}
-  .fascia{font-family:"Space Mono", monospace; font-size:.92rem; padding:.8rem .4rem; min-height:48px; background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:10px; cursor:pointer;}
-  .fascia:hover:not(:disabled){border-color:var(--volt);}
-  .fascia small{display:block; font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;}
-  .fascia:disabled{background:var(--paper-2); color:var(--muted); cursor:not-allowed;}
-  .fascia[aria-pressed=true]{background:var(--volt); border-color:var(--volt); color:#fff;}
-  .fascia[aria-pressed=true] small{color:#fff;}
-  .vuoto{color:var(--muted); padding:1rem 0;}
-  .conferma{position:fixed; left:0; right:0; bottom:0; background:var(--ink); color:var(--paper); padding:1rem 1.25rem; z-index:5;}
-  .conferma div{max-width:680px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem;}
-  .conferma p{margin:0; font-size:.98rem;}
-  .btn{font:inherit; font-weight:600; border:0; border-radius:10px; padding:.8rem 1.3rem; background:var(--orange); color:var(--ink); cursor:pointer; flex:none;}
+
+  .barra{display:flex; align-items:center; gap:.4rem; margin-bottom:.6rem;}
+  .barra b{font-family:"Bricolage Grotesque"; font-size:1.15rem; margin-left:.4rem; text-transform:capitalize;}
+  .tasto{font:inherit; font-size:.95rem; min-width:44px; min-height:44px; padding:0 .8rem; background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:10px; cursor:pointer;}
+  .tasto:hover:not(:disabled){border-color:var(--volt);}
+  .tasto:disabled{opacity:.4; cursor:default;}
+
+  .calendario{background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .testa{display:grid; grid-template-columns:54px repeat(var(--giorni), 1fr); border-bottom:1px solid var(--line);}
+  .testa button{font:inherit; color:var(--ink); background:none; border:0; border-left:1px solid var(--line); padding:.45rem 0; text-align:center; cursor:pointer; min-height:56px;}
+  .testa button:first-of-type{border-left-color:var(--line);}
+  .testa small{display:block; font-family:"Space Mono", monospace; font-size:.68rem; text-transform:uppercase; color:var(--muted);}
+  .testa b{font-family:"Bricolage Grotesque"; font-size:1.2rem; line-height:1.1;}
+  .testa .oggi b{color:var(--volt);}
+  .corpo{display:grid; grid-template-columns:54px repeat(var(--giorni), 1fr);}
+  .ore{position:relative; height:calc(var(--mezzora) * var(--righe));}
+  .ore span{position:absolute; right:.4rem; font-family:"Space Mono", monospace; font-size:.68rem; color:var(--muted); transform:translateY(-50%);}
+  .ore span:first-child{transform:none;}
+  .colonna{position:relative; height:calc(var(--mezzora) * var(--righe)); border-left:1px solid var(--line); cursor:pointer; touch-action:pan-y;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(#EFEAE0 1px, transparent 1px);
+    background-size:100% calc(var(--mezzora) * 2), 100% var(--mezzora); background-position:0 var(--mezzora), 0 0;}
+  .passato{position:absolute; left:0; right:0; top:0; background:rgba(231,225,210,.7); pointer-events:none;}
+  .evento{position:absolute; left:3px; right:3px; border-radius:6px; padding:1px 6px; font-size:.78rem; line-height:1.25; overflow:hidden; pointer-events:none;}
+  .evento.occupata{background:var(--paper-2); color:var(--muted); border-left:3px solid var(--muted);}
+  .evento.bozza{background:var(--volt); color:#fff; box-shadow:0 2px 8px rgba(21,33,44,.3);}
+  .evento.tua{background:var(--green); color:var(--ink); border-left:3px solid var(--ink); font-weight:600;}
+  .legenda{display:flex; flex-wrap:wrap; gap:.9rem; color:var(--muted); font-size:.85rem; margin:.6rem 0 0;}
+  .legenda i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:.3rem; vertical-align:-1px;}
+
+  /* Da telefono un giorno alla volta: la testa resta sulla settimana, la colonna è quella scelta. */
+  @media (max-width:639px){
+    .corpo{grid-template-columns:54px 1fr;}
+    .colonna{display:none;}
+    .colonna.scelta{display:block;}
+    .testa{grid-template-columns:repeat(var(--giorni), 1fr);}
+    .testa .angolo{display:none;}
+    .testa button:first-of-type{border-left:0;}
+    .testa button[aria-pressed=true]{background:var(--ink); color:var(--paper);}
+    .testa button[aria-pressed=true] small, .testa button[aria-pressed=true] b{color:var(--paper);}
+    :root{--mezzora:30px;}
+    .evento{font-size:.9rem;}
+  }
+
+  .conferma{position:fixed; left:0; right:0; bottom:0; background:var(--ink); color:var(--paper); padding:.8rem 1.25rem; z-index:5;}
+  .conferma .dentro{max-width:820px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .8rem;}
+  .conferma p{margin:0; flex:1 1 100%; font-size:.98rem; text-transform:capitalize;}
+  .conferma label{display:flex; align-items:center; gap:.4rem; font-size:.92rem;}
+  .conferma select{font-family:"Space Mono", monospace; font-size:1rem; min-height:44px; padding:0 .5rem; border-radius:8px; border:0; background:#fff; color:var(--ink);}
   .btn:disabled{opacity:.6; cursor:wait;}
-  .avviso{margin-top:1.2rem; padding:.85rem 1rem; border-radius:10px; background:#fff; border-left:4px solid var(--errore);}
+  .btn{font:inherit; font-weight:600; border:0; border-radius:10px; padding:.7rem 1.2rem; background:var(--orange); color:var(--ink); cursor:pointer; margin-left:auto;}
+  .togli{font:inherit; background:none; border:0; color:var(--paper); text-decoration:underline; cursor:pointer; padding:.4rem;}
+  .avviso{margin-top:1rem; padding:.85rem 1rem; border-radius:10px; background:#fff; border-left:4px solid var(--errore);}
   .avviso.ok{border-left-color:var(--green);}
-  .nota{margin-top:2.4rem; color:var(--muted); font-size:.92rem;}
+  .nota{margin-top:1.6rem; color:var(--muted); font-size:.92rem;}
   .nota a{color:var(--volt);}
   [hidden]{display:none !important;}
 </style>
@@ -72,7 +102,7 @@
 
   <main id="pagina">
     <h1>Prenota la <em>sala riunioni</em></h1>
-    <p class="sotto">Gratis per gli abbonati. Scegli giorno e orario: la prenotazione vale subito.</p>
+    <p class="sotto">Gratis per gli abbonati. Scegli un orario libero sul calendario, massimo un'ora: la prenotazione vale subito.</p>
 
     <div class="spazi">
       <img src="spazio-1.jpg" width="640" height="800" alt="Una postazione di The Hub con lo schermo e le piante" />
@@ -85,41 +115,66 @@
     <label class="etichetta" for="nome">Il tuo nome</label>
     <input id="nome" type="text" maxlength="60" autocomplete="name" placeholder="Nome e cognome" />
 
-    <span class="etichetta">Giorno</span>
-    <div class="giorni" id="giorni"></div>
-
-    <span class="etichetta" id="titolo-fasce">Orario</span>
-    <div class="fasce" id="fasce"></div>
-    <p class="vuoto" id="vuoto" hidden></p>
-
+    <span class="etichetta">Calendario</span>
+    <div class="barra">
+      <button class="tasto" id="prima" type="button" aria-label="Settimana prima">‹</button>
+      <button class="tasto" id="oggi" type="button">Oggi</button>
+      <button class="tasto" id="dopo" type="button" aria-label="Settimana dopo">›</button>
+      <b id="mese"></b>
+    </div>
+    <div class="calendario">
+      <div class="testa" id="testa"></div>
+      <div class="corpo" id="corpo"></div>
+    </div>
+    <p class="legenda">
+      <span><i style="background:var(--paper-2)"></i>Occupata</span>
+      <span><i style="background:var(--volt)"></i>La tua scelta</span>
+      <span><i style="background:var(--green)"></i>Prenotata da te</span>
+    </p>
     <div class="avviso" id="avviso" role="status" hidden></div>
-
-    <p class="nota">Lun—ven, dalle 08:30 alle 19:30, a blocchi di un'ora. Per annullare <a href="https://wa.me/393283235971" target="_blank" rel="noopener">scrivici su WhatsApp</a>.</p>
+    <p class="nota">Lun—ven, dalle 08:30 alle 20:00. Tocca un orario libero; da PC puoi anche trascinare. Per annullare <a href="https://wa.me/393283235971" target="_blank" rel="noopener">scrivici su WhatsApp</a>.</p>
   </main>
 </div>
 
 <div class="conferma" id="conferma" hidden>
-  <div><p id="riepilogo"></p><button class="btn" id="prenota" type="button">Prenota</button></div>
+  <div class="dentro">
+    <p id="riepilogo"></p>
+    <label>Dalle <select id="dalle"></select></label>
+    <label>Alle <select id="alle"></select></label>
+    <button class="togli" id="togli" type="button">Togli</button>
+    <button class="btn" id="prenota" type="button">Prenota</button>
+  </div>
 </div>
 
 <script>
   // Vuoto = stesso indirizzo della pagina, per le prove in locale. Online: indirizzo del progetto e chiave pubblica.
   const SUPABASE_URL = 'https://fpkzgbiernyydzdszaol.supabase.co'
   const CHIAVE_PUBBLICA = 'sb_publishable_dR_EdhuSFKidqMyWbN95vw_Ev3b8DkP'
-  const GIORNI_VISIBILI = 61
+  const PASSO = 30, GIORNI_AVANTI = 60
 
   const codice = decodeURIComponent(location.hash.slice(1))
   const $ = id => document.getElementById(id)
+  const ora = m => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  const minuti = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
   const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const lunedi = d => { const x = new Date(d); x.setHours(12, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x }
+  const piu = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x }
   const ERRORI = {
     nome: 'Scrivi il tuo nome.',
     orario: 'Questo orario non si può prenotare.',
+    durata: 'Si prenota al massimo un\'ora.',
     passata: 'Questo orario è già passato.',
-    lontana: 'Si prenota al massimo 60 giorni prima.',
+    lontana: `Si prenota al massimo ${GIORNI_AVANTI} giorni prima.`,
     occupata: 'Qualcuno ha appena preso questo orario. Scegline un altro.',
   }
 
-  let giorno = iso(new Date()), scelta = null, richiesta = 0, attesa = null
+  // Gli orari della sala. I nomi senza limiti vedono tutta la settimana e tutto il giorno.
+  let libero = false, APRE = 510, CHIUDE = 1200, MASSIMO = 60, GIORNI = 5
+  let oggi = iso(new Date()), minutiOra = 0
+  const inizioSettimana = () => { const d = new Date(oggi + 'T12:00'); return lunedi(!libero && d.getDay() % 6 === 0 ? piu(d, 2) : d) }
+  let questa = inizioSettimana(), settimana = questa, scelto = oggi, bozza = null, richiesta = 0, attesa = null
+  let prese = {}
+  const mie = {}
 
   async function chiama(funzione, dati) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${funzione}`, {
@@ -134,104 +189,151 @@
   function avviso(testo, ok = false) {
     $('avviso').hidden = !testo
     $('avviso').textContent = testo || ''
-    $('avviso').classList.toggle('ok', ok)
+    $('avviso').className = ok ? 'avviso ok' : 'avviso'
   }
 
-  function mostraGiorni() {
-    const scatola = $('giorni')
-    const oggi = new Date()
-    for (let i = 0; i < GIORNI_VISIBILI; i++) {
-      const d = new Date(oggi.getFullYear(), oggi.getMonth(), oggi.getDate() + i)
-      const b = document.createElement('button')
-      b.type = 'button'
-      b.className = 'giorno' + (d.getDay() % 6 === 0 ? ' festivo' : '')
-      b.dataset.giorno = iso(d)
-      b.setAttribute('aria-pressed', String(iso(d) === giorno))
+  const occupati = g => prese[g] ?? []
+  const passato = (g, m) => g < oggi || (g === oggi && m <= minutiOra)
+  const sgombro = (g, a, b) => !occupati(g).some(e => a < e.b && b > e.a)
+  // La fine più lontana: un'ora, ma mai oltre la chiusura o la prenotazione dopo.
+  const fineMassima = (g, a) => { let f = Math.min(a + MASSIMO, CHIUDE); for (const e of occupati(g)) if (e.a >= a + PASSO && e.a < f) f = e.a; return f }
+  const righe = () => (CHIUDE - APRE) / PASSO
+
+  function disegna() {
+    const giorni = Array.from({ length: GIORNI }, (_, i) => piu(settimana, i))
+    document.documentElement.style.setProperty('--giorni', GIORNI)
+    document.documentElement.style.setProperty('--righe', righe())
+    $('mese').textContent = giorni[0].toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })
+    $('prima').disabled = settimana <= questa
+    $('dopo').disabled = !libero && iso(piu(settimana, 7)) > iso(piu(new Date(oggi + 'T12:00'), GIORNI_AVANTI))
+    if (!giorni.some(d => iso(d) === scelto)) scelto = iso(giorni[0])
+    const testa = $('testa'); testa.innerHTML = '<div class="angolo"></div>'
+    const corpo = $('corpo'); corpo.innerHTML = ''
+    const ore = document.createElement('div'); ore.className = 'ore'
+    for (let m = APRE; m < CHIUDE; m += PASSO) if (m % 60 === 0 || m === APRE) {
+      const s = document.createElement('span'); s.textContent = ora(m); s.style.top = `calc(var(--mezzora) * ${(m - APRE) / PASSO})`; ore.append(s)
+    }
+    corpo.append(ore)
+    for (const d of giorni) {
+      const g = iso(d)
+      const b = document.createElement('button'); b.type = 'button'
+      if (g === oggi) b.className = 'oggi'
+      b.setAttribute('aria-pressed', g === scelto)
       const nome = document.createElement('small'); nome.textContent = d.toLocaleDateString('it-IT', { weekday: 'short' })
       const num = document.createElement('b'); num.textContent = d.getDate()
-      const mese = document.createElement('small'); mese.textContent = d.toLocaleDateString('it-IT', { month: 'short' })
-      b.append(nome, num, mese)
-      b.onclick = () => {
-        giorno = b.dataset.giorno
-        scatola.querySelectorAll('.giorno').forEach(x => x.setAttribute('aria-pressed', String(x === b)))
-        togliScelta(); avviso(''); carica()
+      b.append(nome, num)
+      b.onclick = () => { scelto = g; disegna() }
+      testa.append(b)
+
+      const c = document.createElement('div'); c.className = 'colonna' + (g === scelto ? ' scelta' : ''); c.dataset.giorno = g
+      const fine = g < oggi ? CHIUDE : g === oggi ? Math.min(Math.max(minutiOra, APRE), CHIUDE) : APRE
+      if (fine > APRE) { const p = document.createElement('div'); p.className = 'passato'; p.style.height = `calc(var(--mezzora) * ${(fine - APRE) / PASSO})`; c.append(p) }
+      const metti = (e, classe, testo) => {
+        const x = document.createElement('div'); x.className = 'evento ' + classe; x.textContent = testo
+        x.style.top = `calc(var(--mezzora) * ${(e.a - APRE) / PASSO} + 1px)`; x.style.height = `calc(var(--mezzora) * ${(e.b - e.a) / PASSO} - 2px)`
+        c.append(x)
       }
-      scatola.append(b)
+      for (const e of occupati(g)) {
+        const mia = (mie[g] ?? []).find(x => x.a === e.a && x.b === e.b)
+        if (e.b > APRE && e.a < CHIUDE) metti(e, mia ? 'tua' : 'occupata', mia ? `${mia.nome} · ${ora(e.a)}–${ora(e.b)}` : 'Occupata')
+      }
+      if (bozza?.g === g) metti(bozza, 'bozza', `${ora(bozza.a)}–${ora(bozza.b)}`)
+      attiva(c, g)
+      corpo.append(c)
     }
+    barra()
   }
 
-  function togliScelta() { scelta = null; $('conferma').hidden = true }
+  const minutoDa = (c, y) => APRE + Math.floor((y - c.getBoundingClientRect().top) / (c.offsetHeight / righe())) * PASSO
 
-  function dataEstesa(g) {
-    const [a, m, d] = g.split('-').map(Number)
-    return new Date(a, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
-  }
-
-  function aggiornaConferma() {
-    if (!scelta) return
-    const nome = $('nome').value.trim()
-    $('conferma').hidden = false
-    $('riepilogo').textContent = `${dataEstesa(giorno)}, ${scelta.ora}–${scelta.fine}${nome ? ` · ${nome}` : ''}`
-  }
-
-  function mostraFasce(fasce) {
-    const scatola = $('fasce')
-    scatola.replaceChildren()
-    $('vuoto').hidden = fasce.length > 0
-    $('vuoto').textContent = fasce.length ? '' : 'In questo giorno la sala non si prenota.'
-    for (const f of fasce) {
-      const b = document.createElement('button')
-      b.type = 'button'
-      b.className = 'fascia'
-      b.textContent = `${f.ora}–${f.fine}`
-      b.disabled = f.stato !== 'libera'
-      b.setAttribute('aria-pressed', String(scelta?.ora === f.ora))
-      if (f.stato !== 'libera') {
-        const s = document.createElement('small')
-        s.textContent = f.stato === 'occupata' ? 'Occupata' : 'Passata'
-        b.append(s)
+  function attiva(c, g) {
+    let tipo = null, inizio = null, mosso = false
+    c.addEventListener('pointerdown', e => {
+      tipo = e.pointerType
+      if (tipo === 'mouse') { inizio = minutoDa(c, e.clientY); mosso = false; c.setPointerCapture(e.pointerId); e.preventDefault() }
+    })
+    c.addEventListener('pointermove', e => {
+      if (inizio === null) return
+      const f = Math.min(minutoDa(c, e.clientY) + PASSO, fineMassima(g, inizio))
+      if (f > inizio + PASSO - 1 && minutoDa(c, e.clientY) !== inizio || mosso) {
+        if (f > inizio && !passato(g, inizio) && sgombro(g, inizio, f)) { mosso = true; bozza = { g, a: inizio, b: f }; ridisegnaBozza(c) }
       }
-      b.onclick = () => {
-        scelta = f; avviso('')
-        scatola.querySelectorAll('.fascia').forEach(x => x.setAttribute('aria-pressed', String(x === b)))
-        aggiornaConferma()
-      }
-      scatola.append(b)
-    }
-    if (scelta && !fasce.some(f => f.ora === scelta.ora && f.stato === 'libera')) togliScelta()
+    })
+    c.addEventListener('pointerup', () => {
+      if (inizio === null) return
+      const a = inizio; inizio = null
+      if (mosso) { scelto = g; disegna() } else scegli(g, a)
+    })
+    // Col dito si tocca e basta: trascinare farebbe scorrere la pagina.
+    c.addEventListener('click', e => { if (tipo !== 'mouse') scegli(g, minutoDa(c, e.clientY)) })
+  }
+  function scegli(g, a) {
+    avviso('')
+    if (a < APRE || a >= CHIUDE || passato(g, a) || !sgombro(g, a, a + PASSO)) return
+    scelto = g; bozza = { g, a, b: fineMassima(g, a) }; disegna()
+  }
+  function ridisegnaBozza(c) {
+    c.querySelector('.evento.bozza')?.remove()
+    const x = document.createElement('div'); x.className = 'evento bozza'; x.textContent = `${ora(bozza.a)}–${ora(bozza.b)}`
+    x.style.top = `calc(var(--mezzora) * ${(bozza.a - APRE) / PASSO} + 1px)`; x.style.height = `calc(var(--mezzora) * ${(bozza.b - bozza.a) / PASSO} - 2px)`
+    c.append(x)
   }
 
+  function barra() {
+    $('conferma').hidden = !bozza
+    if (!bozza) return
+    const d = new Date(bozza.g + 'T12:00')
+    $('riepilogo').textContent = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
+    const dalle = $('dalle'), alle = $('alle'); dalle.innerHTML = ''; alle.innerHTML = ''
+    for (let m = APRE; m < CHIUDE; m += PASSO) if (!passato(bozza.g, m) && sgombro(bozza.g, m, m + PASSO)) dalle.add(new Option(ora(m), m, false, m === bozza.a))
+    for (let m = bozza.a + PASSO; m <= fineMassima(bozza.g, bozza.a); m += PASSO) alle.add(new Option(ora(m), m, false, m === bozza.b))
+  }
+
+  /** Legge la settimana. Il nome conta: per i nomi senza limiti cambiano orari e giorni. */
   async function carica() {
     const mia = ++richiesta
     try {
-      const r = await chiama('sala_fasce', { p_chiave: codice, p_nome: $('nome').value, p_giorno: giorno })
+      const r = await chiama('sala_calendario', { p_chiave: codice, p_nome: $('nome').value, p_dal: iso(settimana), p_al: iso(piu(settimana, 6)) })
       if (mia !== richiesta) return
       if (!r.ok) { $('pagina').hidden = true; $('bloccata').hidden = false; return }
-      mostraFasce(r.fasce)
+      ;[oggi] = r.adesso.split(' '); minutiOra = minuti(r.adesso.split(' ')[1])
+      const cambiato = r.libero !== libero, primaVolta = questa.getTime() !== inizioSettimana().getTime()
+      libero = r.libero
+      if (cambiato) { [APRE, CHIUDE, MASSIMO, GIORNI] = libero ? [0, 1440, 1440, 7] : [510, 1200, 60, 5]; bozza = null }
+      if (cambiato || primaVolta) {
+        const prima = settimana.getTime() === questa.getTime()
+        questa = inizioSettimana()
+        if (prima || settimana < questa) { settimana = questa; scelto = iso(new Date(oggi + 'T12:00')) ; return carica() }
+      }
+      prese = {}
+      for (const p of r.occupate) (prese[p.giorno] ??= []).push({ a: minuti(p.ora), b: minuti(p.fine) })
+      if (bozza && (passato(bozza.g, bozza.a) || !sgombro(bozza.g, bozza.a, bozza.b))) bozza = null
+      disegna()
     } catch {
       if (mia === richiesta) avviso('Non riesco a leggere gli orari. Controlla la connessione e riprova.')
     }
   }
 
-  $('nome').addEventListener('input', () => {
-    aggiornaConferma()
-    clearTimeout(attesa)
-    attesa = setTimeout(carica, 350)
-  })
+  const vaiA = d => { settimana = d; bozza = null; carica() }
+  $('dalle').onchange = e => { const a = +e.target.value; bozza = { g: bozza.g, a, b: fineMassima(bozza.g, a) }; disegna() }
+  $('alle').onchange = e => { bozza.b = +e.target.value; disegna() }
+  $('togli').onclick = () => { bozza = null; disegna() }
+  $('prima').onclick = () => vaiA(piu(settimana, -7))
+  $('dopo').onclick = () => vaiA(piu(settimana, 7))
+  $('oggi').onclick = () => { scelto = oggi; vaiA(questa) }
+  $('nome').addEventListener('input', () => { clearTimeout(attesa); attesa = setTimeout(carica, 350) })
 
   $('prenota').onclick = async () => {
     const nome = $('nome').value.trim()
     if (nome.length < 2) { avviso(ERRORI.nome); $('nome').focus(); return }
+    const b = bozza, testo = `${$('riepilogo').textContent}, ${ora(b.a)}–${ora(b.b)}`
     $('prenota').disabled = true
     try {
-      const r = await chiama('sala_prenota', { p_chiave: codice, p_nome: nome, p_giorno: giorno, p_ora: scelta.ora })
-      if (r.ok) {
-        const fatta = `Prenotata: ${dataEstesa(giorno)}, ${scelta.ora}–${scelta.fine}.`
-        togliScelta(); await carica(); avviso(fatta, true)
-      } else {
-        avviso(ERRORI[r.errore] || 'Prenotazione non riuscita. Riprova.')
-        togliScelta(); await carica()
-      }
+      const r = await chiama('sala_prenota', { p_chiave: codice, p_nome: nome, p_giorno: b.g, p_ora: ora(b.a), p_fine: ora(b.b) })
+      bozza = null
+      if (r.ok) (mie[b.g] ??= []).push({ a: b.a, b: b.b, nome })
+      await carica()
+      avviso(r.ok ? `Prenotata: ${testo}.` : ERRORI[r.errore] || 'Prenotazione non riuscita. Riprova.', r.ok)
     } catch {
       avviso('Prenotazione non riuscita: controlla la connessione e riprova.')
     }
@@ -239,7 +341,7 @@
   }
 
   if (!codice) { $('pagina').hidden = true; $('bloccata').hidden = false }
-  else { mostraGiorni(); carica() }
+  else carica()
 </script>
 </body>
 </html>
