@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="referrer" content="no-referrer" />
+<title>Sala riunioni · The Hub Barletta</title>
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Familjen+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#15212C; --paper:#F3EFE6; --paper-2:#E7E1D2; --line:#D3CBBC;
+    --volt:#2C82C9; --green:#7CC62D; --orange:#EF7D22; --muted:#5C6770; --errore:#B3361E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:"Familjen Grotesk", system-ui, sans-serif; font-size:1.0625rem; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  h1,h2{font-family:"Bricolage Grotesque", sans-serif; font-weight:800; line-height:1.02; margin:0; letter-spacing:-0.02em;}
+  .mono{font-family:"Space Mono", monospace;}
+  .wrap{max-width:720px; margin:0 auto; padding:0 1.25rem 7rem;}
+  header{display:flex; align-items:center; gap:.7rem; padding:1.1rem 0; border-bottom:1px solid var(--line); margin-bottom:2rem;}
+  header img{height:48px; width:48px; border-radius:50%; object-fit:cover;}
+  header b{font-family:"Bricolage Grotesque"; font-weight:800; font-size:1.1rem; letter-spacing:-.03em;}
+  header span{color:var(--volt);}
+  h1{font-size:clamp(2.3rem, 8vw, 3.4rem);}
+  h1 em{font-style:normal; background:var(--green); padding:0 .18em;}
+  .sotto{color:var(--muted); margin:.9rem 0 1.4rem;}
+  .spazi{display:flex; gap:.6rem; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -1.25rem; padding:0 1.25rem .5rem; scrollbar-width:none;}
+  .spazi img{flex:none; width:62%; height:auto; aspect-ratio:4/5; object-fit:cover; border-radius:10px; scroll-snap-align:center; background:var(--paper-2);}
+  .didascalia{font-family:"Space Mono", monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:.4rem 0 0;}
+  @media (min-width:640px){
+    .spazi{display:grid; grid-template-columns:repeat(4, 1fr); margin:0; padding:0; overflow:visible;}
+    .spazi img{width:100%;}
+  }
+  .etichetta{font-family:"Space Mono", monospace; font-size:.74rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); display:block; margin:1.8rem 0 .6rem;}
+  input[type=text]{width:100%; font:inherit; font-size:1.1rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:10px; padding:.85rem 1rem;}
+  input[type=text]:focus{outline:2px solid var(--volt); outline-offset:1px;}
+  .giorni{display:flex; gap:.5rem; overflow-x:auto; padding-bottom:.6rem; scrollbar-width:thin; -webkit-overflow-scrolling:touch;}
+  .giorno{flex:none; width:64px; padding:.55rem 0; text-align:center; background:#fff; border:1px solid var(--line); border-radius:10px; color:var(--ink); font:inherit; cursor:pointer;}
+  .giorno small{display:block; font-family:"Space Mono", monospace; font-size:.68rem; text-transform:uppercase; color:var(--muted);}
+  .giorno b{display:block; font-family:"Bricolage Grotesque"; font-size:1.35rem; line-height:1.15;}
+  .giorno.festivo{background:var(--paper-2);}
+  .giorno[aria-pressed=true]{background:var(--ink); border-color:var(--ink); color:var(--paper);}
+  .giorno[aria-pressed=true] small{color:var(--paper);}
+  .fasce{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:.55rem;}
+  .fascia{font-family:"Space Mono", monospace; font-size:.92rem; padding:.8rem .4rem; min-height:48px; background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:10px; cursor:pointer;}
+  .fascia:hover:not(:disabled){border-color:var(--volt);}
+  .fascia small{display:block; font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;}
+  .fascia:disabled{background:var(--paper-2); color:var(--muted); cursor:not-allowed;}
+  .fascia[aria-pressed=true]{background:var(--volt); border-color:var(--volt); color:#fff;}
+  .fascia[aria-pressed=true] small{color:#fff;}
+  .vuoto{color:var(--muted); padding:1rem 0;}
+  .conferma{position:fixed; left:0; right:0; bottom:0; background:var(--ink); color:var(--paper); padding:1rem 1.25rem; z-index:5;}
+  .conferma div{max-width:680px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem;}
+  .conferma p{margin:0; font-size:.98rem;}
+  .btn{font:inherit; font-weight:600; border:0; border-radius:10px; padding:.8rem 1.3rem; background:var(--orange); color:var(--ink); cursor:pointer; flex:none;}
+  .btn:disabled{opacity:.6; cursor:wait;}
+  .avviso{margin-top:1.2rem; padding:.85rem 1rem; border-radius:10px; background:#fff; border-left:4px solid var(--errore);}
+  .avviso.ok{border-left-color:var(--green);}
+  .nota{margin-top:2.4rem; color:var(--muted); font-size:.92rem;}
+  .nota a{color:var(--volt);}
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="/logo.png" alt="" /><b>The Hub <span>Barletta</span></b></header>
+
+  <section id="bloccata" class="avviso" hidden>Questo link non funziona. Chiedi a The Hub il link aggiornato.</section>
+
+  <main id="pagina">
+    <h1>Prenota la <em>sala riunioni</em></h1>
+    <p class="sotto">Gratis per gli abbonati. Scegli giorno e orario: la prenotazione vale subito.</p>
+
+    <div class="spazi">
+      <img src="spazio-1.jpg" width="640" height="800" alt="Una postazione di The Hub con lo schermo e le piante" />
+      <img src="spazio-2.jpg" width="640" height="800" alt="Le scrivanie dell'open space di The Hub" />
+      <img src="spazio-3.jpg" width="640" height="800" loading="lazy" alt="Gli scaffali con le piante e la porta a vetri di The Hub" />
+      <img src="spazio-4.jpg" width="640" height="800" loading="lazy" alt="Una postazione d'angolo di The Hub" />
+    </div>
+    <p class="didascalia">Gli spazi di The Hub</p>
+
+    <label class="etichetta" for="nome">Il tuo nome</label>
+    <input id="nome" type="text" maxlength="60" autocomplete="name" placeholder="Nome e cognome" />
+
+    <span class="etichetta">Giorno</span>
+    <div class="giorni" id="giorni"></div>
+
+    <span class="etichetta" id="titolo-fasce">Orario</span>
+    <div class="fasce" id="fasce"></div>
+    <p class="vuoto" id="vuoto" hidden></p>
+
+    <div class="avviso" id="avviso" role="status" hidden></div>
+
+    <p class="nota">Lun—ven, dalle 08:30 alle 19:30, a blocchi di un'ora. Per annullare <a href="https://wa.me/393283235971" target="_blank" rel="noopener">scrivici su WhatsApp</a>.</p>
+  </main>
+</div>
+
+<div class="conferma" id="conferma" hidden>
+  <div><p id="riepilogo"></p><button class="btn" id="prenota" type="button">Prenota</button></div>
+</div>
+
+<script>
+  // Vuoto = stesso indirizzo della pagina, per le prove in locale. Online: indirizzo del progetto e chiave pubblica.
+  const SUPABASE_URL = 'https://fpkzgbiernyydzdszaol.supabase.co'
+  const CHIAVE_PUBBLICA = 'sb_publishable_dR_EdhuSFKidqMyWbN95vw_Ev3b8DkP'
+  const GIORNI_VISIBILI = 61
+
+  const codice = decodeURIComponent(location.hash.slice(1))
+  const $ = id => document.getElementById(id)
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const ERRORI = {
+    nome: 'Scrivi il tuo nome.',
+    orario: 'Questo orario non si può prenotare.',
+    passata: 'Questo orario è già passato.',
+    lontana: 'Si prenota al massimo 60 giorni prima.',
+    occupata: 'Qualcuno ha appena preso questo orario. Scegline un altro.',
+  }
+
+  let giorno = iso(new Date()), scelta = null, richiesta = 0, attesa = null
+
+  async function chiama(funzione, dati) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${funzione}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: CHIAVE_PUBBLICA, Authorization: `Bearer ${CHIAVE_PUBBLICA}` },
+      body: JSON.stringify(dati),
+    })
+    if (!r.ok) throw new Error('rete')
+    return r.json()
+  }
+
+  function avviso(testo, ok = false) {
+    $('avviso').hidden = !testo
+    $('avviso').textContent = testo || ''
+    $('avviso').classList.toggle('ok', ok)
+  }
+
+  function mostraGiorni() {
+    const scatola = $('giorni')
+    const oggi = new Date()
+    for (let i = 0; i < GIORNI_VISIBILI; i++) {
+      const d = new Date(oggi.getFullYear(), oggi.getMonth(), oggi.getDate() + i)
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.className = 'giorno' + (d.getDay() % 6 === 0 ? ' festivo' : '')
+      b.dataset.giorno = iso(d)
+      b.setAttribute('aria-pressed', String(iso(d) === giorno))
+      const nome = document.createElement('small'); nome.textContent = d.toLocaleDateString('it-IT', { weekday: 'short' })
+      const num = document.createElement('b'); num.textContent = d.getDate()
+      const mese = document.createElement('small'); mese.textContent = d.toLocaleDateString('it-IT', { month: 'short' })
+      b.append(nome, num, mese)
+      b.onclick = () => {
+        giorno = b.dataset.giorno
+        scatola.querySelectorAll('.giorno').forEach(x => x.setAttribute('aria-pressed', String(x === b)))
+        togliScelta(); avviso(''); carica()
+      }
+      scatola.append(b)
+    }
+  }
+
+  function togliScelta() { scelta = null; $('conferma').hidden = true }
+
+  function dataEstesa(g) {
+    const [a, m, d] = g.split('-').map(Number)
+    return new Date(a, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
+  }
+
+  function aggiornaConferma() {
+    if (!scelta) return
+    const nome = $('nome').value.trim()
+    $('conferma').hidden = false
+    $('riepilogo').textContent = `${dataEstesa(giorno)}, ${scelta.ora}–${scelta.fine}${nome ? ` · ${nome}` : ''}`
+  }
+
+  function mostraFasce(fasce) {
+    const scatola = $('fasce')
+    scatola.replaceChildren()
+    $('vuoto').hidden = fasce.length > 0
+    $('vuoto').textContent = fasce.length ? '' : 'In questo giorno la sala non si prenota.'
+    for (const f of fasce) {
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.className = 'fascia'
+      b.textContent = `${f.ora}–${f.fine}`
+      b.disabled = f.stato !== 'libera'
+      b.setAttribute('aria-pressed', String(scelta?.ora === f.ora))
+      if (f.stato !== 'libera') {
+        const s = document.createElement('small')
+        s.textContent = f.stato === 'occupata' ? 'Occupata' : 'Passata'
+        b.append(s)
+      }
+      b.onclick = () => {
+        scelta = f; avviso('')
+        scatola.querySelectorAll('.fascia').forEach(x => x.setAttribute('aria-pressed', String(x === b)))
+        aggiornaConferma()
+      }
+      scatola.append(b)
+    }
+    if (scelta && !fasce.some(f => f.ora === scelta.ora && f.stato === 'libera')) togliScelta()
+  }
+
+  async function carica() {
+    const mia = ++richiesta
+    try {
+      const r = await chiama('sala_fasce', { p_chiave: codice, p_nome: $('nome').value, p_giorno: giorno })
+      if (mia !== richiesta) return
+      if (!r.ok) { $('pagina').hidden = true; $('bloccata').hidden = false; return }
+      mostraFasce(r.fasce)
+    } catch {
+      if (mia === richiesta) avviso('Non riesco a leggere gli orari. Controlla la connessione e riprova.')
+    }
+  }
+
+  $('nome').addEventListener('input', () => {
+    aggiornaConferma()
+    clearTimeout(attesa)
+    attesa = setTimeout(carica, 350)
+  })
+
+  $('prenota').onclick = async () => {
+    const nome = $('nome').value.trim()
+    if (nome.length < 2) { avviso(ERRORI.nome); $('nome').focus(); return }
+    $('prenota').disabled = true
+    try {
+      const r = await chiama('sala_prenota', { p_chiave: codice, p_nome: nome, p_giorno: giorno, p_ora: scelta.ora })
+      if (r.ok) {
+        const fatta = `Prenotata: ${dataEstesa(giorno)}, ${scelta.ora}–${scelta.fine}.`
+        togliScelta(); await carica(); avviso(fatta, true)
+      } else {
+        avviso(ERRORI[r.errore] || 'Prenotazione non riuscita. Riprova.')
+        togliScelta(); await carica()
+      }
+    } catch {
+      avviso('Prenotazione non riuscita: controlla la connessione e riprova.')
+    }
+    $('prenota').disabled = false
+  }
+
+  if (!codice) { $('pagina').hidden = true; $('bloccata').hidden = false }
+  else { mostraGiorni(); carica() }
+</script>
+</body>
+</html>

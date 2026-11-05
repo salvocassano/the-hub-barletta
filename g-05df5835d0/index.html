@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="referrer" content="no-referrer" />
+<title>Prenotazioni sala · The Hub Barletta</title>
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Familjen+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{ --ink:#15212C; --paper:#F3EFE6; --line:#D3CBBC; --volt:#2C82C9; --green:#7CC62D; --muted:#5C6770; --errore:#B3361E; }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:"Familjen Grotesk", system-ui, sans-serif; font-size:1.0625rem; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  h1{font-family:"Bricolage Grotesque", sans-serif; font-weight:800; line-height:1.02; margin:0; letter-spacing:-0.02em; font-size:clamp(2rem, 7vw, 3rem);}
+  .wrap{max-width:720px; margin:0 auto; padding:0 1.25rem 4rem;}
+  header{display:flex; align-items:center; gap:.7rem; padding:1.1rem 0; border-bottom:1px solid var(--line); margin-bottom:2rem;}
+  header img{height:48px; width:48px; border-radius:50%; object-fit:cover;}
+  header b{font-family:"Bricolage Grotesque"; font-weight:800; font-size:1.1rem; letter-spacing:-.03em;}
+  header span{color:var(--volt);}
+  .sotto{color:var(--muted); margin:.7rem 0 1.6rem;}
+  h2{font-family:"Space Mono", monospace; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:400; margin:1.8rem 0 .5rem;}
+  .riga{display:flex; align-items:center; gap:1rem; background:#fff; border:1px solid var(--line); border-radius:10px; padding:.7rem .9rem; margin-bottom:.45rem;}
+  .ora{font-family:"Space Mono", monospace; font-size:.92rem; flex:none; width:6.6rem;}
+  .chi{flex:1; min-width:0; overflow-wrap:anywhere;}
+  .chi small{display:block; color:var(--muted); font-size:.8rem;}
+  button{font:inherit; font-size:.92rem; flex:none; border:1px solid var(--line); background:transparent; color:var(--errore); border-radius:8px; padding:.5rem .75rem; min-height:40px; cursor:pointer;}
+  button.si{background:var(--errore); border-color:var(--errore); color:#fff;}
+  .avviso{padding:.85rem 1rem; border-radius:10px; background:#fff; border-left:4px solid var(--errore); margin-top:1rem;}
+  .vuoto{color:var(--muted);}
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="/logo.png" alt="" /><b>The Hub <span>Barletta</span></b></header>
+  <section id="bloccata" class="avviso" hidden>Questo link non funziona.</section>
+  <main id="pagina">
+    <h1>Prenotazioni della sala</h1>
+    <p class="sotto" id="totale"></p>
+    <div id="elenco"></div>
+    <div class="avviso" id="avviso" hidden></div>
+  </main>
+</div>
+<script>
+  // Vuoto = stesso indirizzo della pagina, per le prove in locale. Online: indirizzo del progetto e chiave pubblica.
+  const SUPABASE_URL = 'https://fpkzgbiernyydzdszaol.supabase.co'
+  const CHIAVE_PUBBLICA = 'sb_publishable_dR_EdhuSFKidqMyWbN95vw_Ev3b8DkP'
+
+  const codice = decodeURIComponent(location.hash.slice(1))
+  const $ = id => document.getElementById(id)
+  const oggi = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
+
+  async function chiama(funzione, dati) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${funzione}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: CHIAVE_PUBBLICA, Authorization: `Bearer ${CHIAVE_PUBBLICA}` },
+      body: JSON.stringify(dati),
+    })
+    if (!r.ok) throw new Error('rete')
+    return r.json()
+  }
+
+  function bloccata() { $('pagina').hidden = true; $('bloccata').hidden = false }
+
+  function etichetta(g) {
+    const [a, m, d] = g.split('-').map(Number)
+    return new Date(a, m - 1, d).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
+  }
+
+  function riga(p) {
+    const r = document.createElement('div'); r.className = 'riga'
+    const ora = document.createElement('span'); ora.className = 'ora'; ora.textContent = `${p.ora}–${p.fine}`
+    const chi = document.createElement('div'); chi.className = 'chi'; chi.textContent = p.nome
+    const quando = document.createElement('small'); quando.textContent = `prenotata il ${p.creata_il}`
+    chi.append(quando)
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Annulla'
+    // Il primo tocco chiede conferma, il secondo annulla.
+    b.onclick = async () => {
+      if (!b.classList.contains('si')) { b.classList.add('si'); b.textContent = 'Conferma'; return }
+      b.disabled = true
+      try {
+        const e = await chiama('sala_annulla', { p_chiave: codice, p_id: p.id })
+        if (!e.ok) throw new Error('annulla')
+        await carica()
+      } catch {
+        $('avviso').hidden = false; $('avviso').textContent = 'Non sono riuscito ad annullare. Riprova.'
+        b.disabled = false
+      }
+    }
+    r.append(ora, chi, b)
+    return r
+  }
+
+  async function carica() {
+    try {
+      const r = await chiama('sala_elenco', { p_chiave: codice, p_dal: oggi() })
+      if (!r.ok) return bloccata()
+      $('avviso').hidden = true
+      const elenco = $('elenco'); elenco.replaceChildren()
+      $('totale').textContent = r.prenotazioni.length ? `${r.prenotazioni.length} da oggi in poi.` : 'Nessuna prenotazione da oggi in poi.'
+      let giorno = ''
+      for (const p of r.prenotazioni) {
+        if (p.giorno !== giorno) {
+          giorno = p.giorno
+          const t = document.createElement('h2'); t.textContent = etichetta(p.giorno); elenco.append(t)
+        }
+        elenco.append(riga(p))
+      }
+    } catch {
+      $('avviso').hidden = false; $('avviso').textContent = 'Non riesco a leggere le prenotazioni. Controlla la connessione.'
+    }
+  }
+
+  if (!codice) bloccata(); else carica()
+</script>
+</body>
+</html>
